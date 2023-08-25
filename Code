@@ -1,0 +1,61 @@
+#Frida Rangel  #A01651385
+#Exponential Distribution  
+set.seed(123) # for reproducibility
+
+# Generate random data for each rate
+rates <- c(0.5, 1, 2)
+exp_data <- lapply(rates, function(rate) rexp(1000, rate=rate))
+par(mfrow=c(1,3))
+
+# Plotting the Exponential distribution with varying rates
+for(i in 1:length(rates)) {
+  hist(exp_data[[i]], breaks=40, probability=TRUE, main=paste("Rate =", rates[i]), xlab="Value", ylab="Density")
+  curve(dexp(x, rate=rates[i]), add=TRUE, col="red", lwd=2)
+}
+
+#Gamma Distribution 
+
+library(ggplot2)
+library(tidyr)
+
+# Setting up the data
+set.seed(123)
+
+shapes <- c(1, 2, 3, 5)
+scale <- 2
+
+generate_gamma_data <- function(shape, scale, n=1000) {
+  data.frame(
+    value = rgamma(n, shape = shape, scale = scale),
+    shape = shape,
+    scale = scale
+  )
+}
+
+gamma_data <- do.call(rbind, lapply(shapes, generate_gamma_data, scale=scale))
+
+# Plotting
+ggplot(gamma_data, aes(x = value)) +
+  geom_histogram(aes(y = ..density..), bins = 40, fill = "lightgreen") +
+  geom_density(color = "red") +
+  facet_wrap(~shape, labeller = label_both) +
+  labs(title = "Gamma Distribution for Different Shape Parameters",
+       x = "Value",
+       y = "Density")
+
+
+#Lognormal Distribution
+ # Setting up the visualization
+par(mfrow = c(2, 2))
+set.seed(123)
+
+meanlogs <- c(0, 0.5, 1, 1.5)
+sdlogs <- c(0.5, 1, 1.5, 2)
+
+for (meanlog in meanlogs) {
+  for (sdlog in sdlogs) {
+    lognorm_data <- rlnorm(1000, meanlog = meanlog, sdlog = sdlog)
+    hist(lognorm_data, main = paste("Meanlog =", meanlog, ", Sdlog =", sdlog), probability = TRUE, breaks = 40, col = "lightyellow")
+    lines(density(lognorm_data), col = "red")
+  }
+}
